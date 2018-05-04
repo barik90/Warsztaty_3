@@ -2,7 +2,6 @@ package pl.coderslab.warsztaty3.controller;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -11,21 +10,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import pl.coderslab.warsztaty3.dao.ExerciseDao;
+import pl.coderslab.warsztaty3.dao.UserDao;
 import pl.coderslab.warsztaty3.util.DbUtil;
 
 /**
- * Servlet implementation class DbUtilTest
+ * Servlet implementation class AdminExercises
  */
-@WebServlet("/dbtest")
-public class DbUtilTest extends HttpServlet {
+@WebServlet("/admin-exercises")
+public class AdminExercises extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public DbUtilTest() {
+	public AdminExercises() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -34,15 +34,14 @@ public class DbUtilTest extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		ExerciseDao exercisesDao = new ExerciseDao();
 		try {
 			Connection c = DbUtil.getConn();
-			PreparedStatement ps = c.prepareStatement("INSERT INTO test(id, data) VALUES(default, 'someData');");
-			ps.executeUpdate();
+			request.setAttribute("exercises", (exercisesDao.loadAllExercises(c)));
+			getServletContext().getRequestDispatcher("/WEB-INF/views/exercise/admin-exercise.jsp").forward(request,
+					response);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
-
 }
